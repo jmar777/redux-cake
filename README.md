@@ -183,5 +183,5 @@ $ npm run build
 # note: redux is a peer dependency. If you haven't installed it yet, then do that now:
 $ npm install redux
 
-$npm test
+$ npm test
 ```
