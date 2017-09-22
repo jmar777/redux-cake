@@ -1,12 +1,15 @@
 # redux-cake
 
-A sweet utility for managing dynamic slices of state in your redux reducers.
-
 Redux Cake is a [store enhancer](https://github.com/reactjs/redux/blob/master/docs/Glossary.md#store-enhancer), and small set of related APIs, that facilitate the adding and removing of slices of state on the fly.
 
-The ability to add and remove dynamic slices of state is useful for code organization and code splitting purposes, as well as other scenarios where slices do not need to be long-lived. The goal of Redux Cake is to provide a small (~1.7kb) utility that is 100% backwards compatible with Redux's standard [`combineReducers()`](http://redux.js.org/docs/api/combineReducers.html) implementation, while adding dynamic state slice facilities.
+## Motivation & Goals
 
-## Usage
+* Support flexible code organization and code splitting practices by enabling self-registering slices with the store.
+* Allow applications to easily create and prune slices that don't need to be long-lived.
+* Provide a drop-in replacement for Redux's standard [`combineReducers()`](http://redux.js.org/docs/api/combineReducers.html) implementation, so preexisting static reducers don't need to be refactored.
+* Remain as lightweight as possible (currently ~1.7kb).
+
+## Example Usage
 
 ```javascript
 import { createStore } from 'redux';
@@ -33,7 +36,7 @@ $ npm install redux-cake
 
 ## Documentation
 
-* **[Getting Started](#getting-started)
+* **[Getting Started](#getting-started)**
 * **[API](#api)**
     * [reduxCake](#reduxcake)
     * [combineReducers(reducers)](#combinereducersreducers)
@@ -41,11 +44,10 @@ $ npm install redux-cake
     * [removeSlice(key)](#removeslicekey)
     * [ActionTypes](#actiontypes)
 * **[Contributing](#contributing)**
-* **[Running Tests](#running-tests)**
 
 ## Getting Started
 
-Redux Cake requires that you use both the `reduxCake` store enhancer, and the `combineReducers` exported from this module for your root reducer.
+Redux Cake requires that you use both the `reduxCake` store enhancer, and the `combineReducers` exported from this module for your root reducer. Note that our `combineReducers` is simply a wrapper around Redux's, but for [technical reasons](https://github.com/reactjs/redux/issues/2613), is a necessity.
 
 For a basic setup, that will look like this:
 
@@ -62,28 +64,25 @@ If you have multiple enhancers to apply, you'll need to use `compose()`:
 import { createStore, compose, applyMiddleware } from 'redux';
 import { reduxCake, combineReducers } from 'redux-cake';
 import thunk from 'redux-thunk';
-import promiseMiddleware from 'redux-promise-middleware';
 
 const store = createStore(combineReducers({}), compose(
   reduxCake,
-  applyMiddleware(promiseMiddleware, thunk)
+  applyMiddleware(thunk)
 ));
 ```
 
-Once your store is created, you're free to start calling `addSlice()` and `removeSlice()` to manage your state slices as needed.
+Once your store is created, you're free to start calling [`addSlice()`](#addslicekey-reducer) and [`removeSlice()`](#removeslicekey) to manage your state slices as needed.
 
 
 ## API
 
 ### `reduxCake`
 
-This is the [store enhancer](https://github.com/reactjs/redux/blob/master/docs/Glossary.md#store-enhancer) that enables the dynamic adding and removing of state slices. You don't need to do anything with this other than provide it `createStore()`, as shown in the [getting started](#getting-started) section.
+This is the [store enhancer](https://github.com/reactjs/redux/blob/master/docs/Glossary.md#store-enhancer) that enables the dynamic adding and removing of state slices. You don't need to do anything with this other than pass it `createStore()`, as shown in the [getting started](#getting-started) section.
 
 ### `combineReducers(reducers)`
 
-Accepts an object whose keys represent slices of states, where the corresponding values are reducing functions for their respective slices.
-
-This is just a wrapper around [redux's default `combineReducers`](http://redux.js.org/docs/api/combineReducers.html) implementation. While it behaves the same, _it is important that you actually use this one_, as we need to intercept actions as they pass through.
+Accepts an object whose keys represent slices of state, where the corresponding values are reducing functions for their respective slices. If this is a new concept to you, you should read the documentation for [Redux's default `combineReducers`](http://redux.js.org/docs/api/combineReducers.html) implementation. Ours is a wrapper around Redux's that retains API compatability.
 
 Note that you can can still use this to provide initial/static state slices upon store creation, just like you normally would.
 
@@ -102,12 +101,12 @@ const rootReducer = combineReducers({
     
     return state;
   }
-})
+});
 ```
 
 ### `addSlice(key, reducer)`
 
-Accepts a string `key` and a function `reducer` which define a new slice of state and its reducer.
+Accepts a string `key` and a function `reducer`, which together define a new slice of state and its reducer.
 
 The reducer function should accept `state` and `action` arguments, just like any other reducer function. Additionally, it needs to conform to the same criteria imposed by `combineReducers` [here](http://redux.js.org/docs/api/combineReducers.html#notes).
 
@@ -162,14 +161,27 @@ When a slice is added or removed using `addSlice()` or `removeSlice()`, Redux Ca
 
 Pull requests are welcome, but I recommend filing an issue to discuss feature proposals first.
 
-For local development, just run `npm install`, and then `npm run dev` to start the watch server.
+To get started:
 
-To create a production-ready build, use `npm run build`.`
-
-## Running Tests
-
-```
-$ npm test
+1. Install dependencies
+```sh
+$ npm install
 ```
 
-Please note that the tests require `redux` to run, which is a peer dependency, so you'll need to run `npm install redux` first.
+2. For local development, there is a watch server that will automatically generate new development (non-uglified) builds:
+```sh
+$ npm run dev
+```
+
+3. To create a release (uglified) build:
+```sh
+$ npm run build
+```
+
+4. To run the test suite:
+```sh
+# note: redux is a peer dependency. If you haven't installed it yet, then do that now:
+$ npm install redux
+
+$npm test
+```
