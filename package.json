@@ -1,0 +1,51 @@
+{
+  "name": "redux-cake",
+  "version": "0.0.1",
+  "description": "A sweet utility for managing dynamic slices of state in your redux reducers.",
+  "main": "dist/redux-cake.js",
+  "scripts": {
+    "build": "rollup -c config/rollup.config.dist.js",
+    "dev": "rollup -c config/rollup.config.dev.js --watch",
+    "test": "mocha --reporter list"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jmar777/redux-cake.git"
+  },
+  "keywords": [
+    "redux",
+    "store",
+    "reducer",
+    "reducers",
+    "dynamic",
+    "state",
+    "slice",
+    "react",
+    "cake",
+    "addSlice",
+    "removeSlice",
+    "combineReducers"
+  ],
+  "author": "Jeremy Martin <jmar777@gmail.com> (https://twitter.com/jmar777)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jmar777/redux-cake/issues"
+  },
+  "homepage": "https://github.com/jmar777/redux-cake#readme",
+  "peerDependencies": {
+    "redux": "*"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "expect": "^21.1.0",
+    "mocha": "^3.5.3",
+    "redux-thunk": "^2.2.0",
+    "rollup": "^0.50.0",
+    "rollup-plugin-babel": "^3.0.2",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-uglify": "^2.0.1"
+  },
+  "dependencies": {}
+}
