@@ -43,7 +43,6 @@ export const reduxCake = createStore => (reducer, preloadedState, enhancer) => {
 
   previousReducers = reducer.originalReducers;
 
-  let isStoreInitialized = true;
   clearTimeout(initializationTimer);
 
   // loop through any pending addSlice() or removeSlice() operations
