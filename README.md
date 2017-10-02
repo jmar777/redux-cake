@@ -1,6 +1,6 @@
 # redux-cake
 
-Redux Cake is a [store enhancer](https://github.com/reactjs/redux/blob/master/docs/Glossary.md#store-enhancer), and small set of related APIs, that facilitate the adding and removing of slices of state on the fly.
+Redux Cake is a [store enhancer](https://github.com/reactjs/redux/blob/master/docs/Glossary.md#store-enhancer) and small set of related APIs that facilitate the adding and removing of slices of state on the fly.
 
 ## Motivation & Goals
 

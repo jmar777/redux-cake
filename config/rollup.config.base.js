@@ -8,7 +8,7 @@ export default {
   output: {
     file: 'dist/redux-cake.js',
     format: 'umd',
-    name: 'redux-cake',
+    name: 'redux-cake'
   },
 
   sourcemap: true,

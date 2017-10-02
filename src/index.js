@@ -1,13 +1,22 @@
 import { combineReducers as reduxCombineReducers } from 'redux';
-
 const REDUX_CAKE_SLICE = '@@redux-cake';
 const REDUX_INIT = '@@redux/INIT';
 
 let store, previousReducers;
 
-// keeps track of a slice to remove after replacing the reducer
-// (we only have a small window to remove it from state before
-// combineReducers complains about it)
+/**
+ * Slice operations (`addSlice()` and `removeSlice()`) can come in before the
+ * store has been created, so we queue them up briefly, to allow initialization
+ * to complete.
+ */
+const pendingSliceOps = [];
+let initializationTimer;
+
+/**
+ * Keeps track of a slice to remove after replacing the reducer
+ * (we only have a small window to remove it from state before
+ * combineReducers complains about it)
+ */
 let sliceToRemove = null;
 
 /**
@@ -34,6 +43,13 @@ export const reduxCake = createStore => (reducer, preloadedState, enhancer) => {
 
   previousReducers = reducer.originalReducers;
 
+  let isStoreInitialized = true;
+  clearTimeout(initializationTimer);
+
+  // loop through any pending addSlice() or removeSlice() operations
+  pendingSliceOps.forEach(op => op());
+  pendingSliceOps.length = 0;
+
   return store;
 };
 
@@ -44,7 +60,9 @@ export const reduxCake = createStore => (reducer, preloadedState, enhancer) => {
  */
 export const addSlice = (key, reducer) => {
   if (!store) {
-    throw new Error('Cannot call addSlice() without first using the `reduxCake` enhancer.');
+    startInitializationTimer();
+    pendingSliceOps.push(() => addSlice(key, reducer));
+    return;
   }
 
   if (previousReducers[key]) {
@@ -68,7 +86,9 @@ export const addSlice = (key, reducer) => {
  */
 export const removeSlice = key => {
   if (!store) {
-    throw new Error('Cannot call removeSlice() without first using the `reduxCake` enhancer.');
+    startInitializationTimer();
+    pendingSliceOps.push(() => removeSlice(key));
+    return;
   }
 
   if (!previousReducers[key]) {
@@ -121,4 +141,12 @@ export const combineReducers = reducers => {
   finalReducer.originalReducers = reducers;
 
   return finalReducer;
+};
+
+const startInitializationTimer = () => {
+  if (initializationTimer) return;
+
+  initializationTimer = setTimeout(() => {
+    console.warn('It looks like you forgot to use the reduxCake store enhancer!');
+  }, 1000);
 };
