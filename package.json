@@ -1,6 +1,6 @@
 {
   "name": "redux-cake",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A sweet utility for managing dynamic slices of state in your redux reducers.",
   "main": "dist/redux-cake.js",
   "scripts": {
